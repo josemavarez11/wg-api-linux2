@@ -48,12 +48,21 @@ def create_deck(request):
     data = request.data.copy()
 
     data['id_user'] = id_user
+
+    print('data: ', data)
     
     serializer = DeckSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+    print('serializer: ', serializer.data)
+    try:
+        if serializer.is_valid():
+            print('serializer valido')
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    except Exception as err: 
+        print(f"Unexpected {err=}, {type(err)=}")
+        raise
+
+    print('invalid serializer: ', serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @jwt_required
