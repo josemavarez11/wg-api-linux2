@@ -9,7 +9,7 @@ from .models import Deck, Card, LearningPhase, LearningStep
 
 # Create your views here.
 
-@admin_required
+#@admin_required
 @api_view(['POST'])
 def create_learning_phase(request):
     serializer = LearningPhaseSerializer(data=request.data)
@@ -25,7 +25,7 @@ def get_learning_phases(request):
     serializer = LearningPhaseSerializer(learning_phases, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-@admin_required
+#@admin_required
 @api_view(['POST'])
 def create_learning_step(request):
     serializer = LearningStepSerializer(data=request.data)
