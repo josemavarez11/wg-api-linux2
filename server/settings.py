@@ -12,6 +12,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'wiseglot-api.onrender.com',
+    'https://wg-api-linux2.onrender.com',
     '0.0.0.0'
 ]
 
