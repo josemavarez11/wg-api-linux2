@@ -44,7 +44,12 @@ def get_learning_steps(request):
 @jwt_required
 @api_view(['POST'])
 def create_deck(request):
-    serializer = DeckSerializer(data=request.data)
+    id_user = request.custom_user.id
+    data = request.data.copy()
+
+    data['id_user'] = id_user
+    
+    serializer = DeckSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
