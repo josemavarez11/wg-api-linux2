@@ -71,6 +71,10 @@ def get_cards_by_deck(request, id_deck):
     deck = get_object_or_404(Deck, id=id_deck)
     cards = Card.objects.filter(id_deck=deck)
     serializer = CardSerializer(cards, many=True)
+
+    if serializer.data == []:
+        return Response('No cards found', status=status.HTTP_204_NO_CONTENT)
+    
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @jwt_required
