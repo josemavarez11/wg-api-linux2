@@ -8,8 +8,8 @@ urlpatterns = [
     path('get-learning-steps/', views.get_learning_steps, name='get-learning-steps'),
     path('create-deck/', views.create_deck, name='create-deck'),
     path('get-decks-by-user/', views.get_decks_by_user, name='get-decks-by-user'),
-    path('get-cards-by-deck/<int:id_deck>/', views.get_cards_by_deck, name='get-cards-by-deck'),
-    path('delete-deck/<int:id_deck>/', views.delete_deck, name='delete-deck'),
-    path('update-deck/<int:id_deck>/', views.update_deck, name='update-deck'),
-    path('reset-deck-progress/<int:id_deck>/', views.reset_deck_progress, name='reset-deck-progress'),
+    path('get-cards-by-deck/<uuid:id_deck>/', views.get_cards_by_deck, name='get-cards-by-deck'),
+    path('delete-deck/<uuid:id_deck>/', views.delete_deck, name='delete-deck'),
+    path('update-deck/<uuid:id_deck>/', views.update_deck, name='update-deck'),
+    path('reset-deck-progress/<uuid:id_deck>/', views.reset_deck_progress, name='reset-deck-progress'),
 ]
