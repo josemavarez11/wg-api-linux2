@@ -48,27 +48,20 @@ def create_deck(request):
     data = request.data.copy()
 
     data['id_user'] = id_user
-
-    print('data: ', data)
-    
     serializer = DeckSerializer(data=data)
     
-    try:
-        if serializer.is_valid():
-            print('serializer valido')
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            print('invalid serializer: ', serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as err:
-        print(f"Unexpected {err=}, {type(err)=}")
-        raise
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @jwt_required
 @api_view(['GET'])
 def get_decks_by_user(request):
-    decks = Deck.objects.filter(id_user=request.user)
+    id_user = request.custom_user.id
+    decks = Deck.objects.filter(id_user=id_user)
+    
     serializer = DeckSerializer(decks, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
