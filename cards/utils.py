@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime
 from .serializers import CardSerializer
 
 def register_new_card(id_deck, val_card, mea_card):
@@ -6,7 +6,7 @@ def register_new_card(id_deck, val_card, mea_card):
         'id_deck': id_deck,
         'val_card': val_card,
         'mea_card': mea_card,
-        'day_added_card': timezone.now(),
+        'day_added_card': datetime.now( ).strftime('%Y-%m-%d %H:%M:%S'),
     })
 
     if serializer.is_valid():
