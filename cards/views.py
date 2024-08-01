@@ -135,7 +135,7 @@ def create_card(request):
         return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
 
     deck = get_object_or_404(Deck, id=id_deck)
-    card = register_new_card(deck, val_card, mea_card)
+    card = register_new_card(deck.id, val_card, mea_card)
 
     if card is None:
         return Response({'message': 'Error creating card'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
