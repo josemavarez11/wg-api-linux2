@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from authentication.middlewares import admin_required, jwt_required
 from .serializers import DeckSerializer, CardSerializer, LearningPhaseSerializer, LearningStepSerializer
 from .models import Deck, Card, LearningPhase, LearningStep
+from .utils import register_new_card
 
 # Create your views here.
 
@@ -122,3 +123,39 @@ def reset_deck_progress(request, id_deck):
         card.rev_card = 0
         card.save()
     return Response(status=status.HTTP_200_OK)
+
+@jwt_required
+@api_view(['POST'])
+def create_card(request):
+    id_deck = request.data.get('id_deck')
+    val_card = request.data.get('val_card')
+    mea_card = request.data.get('mea_card')
+
+    if not id_deck or not val_card or not mea_card:
+        return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
+
+    deck = get_object_or_404(Deck, id=id_deck)
+    card = register_new_card(deck, val_card, mea_card)
+
+    if card is None:
+        return Response({'message': 'Error creating card'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(card, status=status.HTTP_201_CREATED)
+
+@jwt_required
+@api_view(['POST'])
+def generate_cards_with_ai(request):
+    id_deck = request.data.get('id_deck')
+    cards_amount = request.data.get('cards_amount')
+    topic = request.data.get('topic')
+    user_prompt = request.data.get('user_prompt')
+
+    if not (id_deck and cards_amount) and not (topic or user_prompt):
+        return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
+
+    print('Generating cards with AI...')
+    print(f'id_deck: {id_deck}')
+    print(f'cards_amount: {cards_amount}')
+    print(f'topic: {topic}')
+    print(f'user_prompt: {user_prompt}')
+    return Response(status=status.HTTP_501_NOT_IMPLEMENTED)

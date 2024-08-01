@@ -24,3 +24,6 @@ def build_user_presentation_msg(user_info):
     )
 
     return message
+
+def build_cards_generation_msg():
+    return

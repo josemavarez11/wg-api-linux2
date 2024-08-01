@@ -12,4 +12,6 @@ urlpatterns = [
     path('delete-deck/<uuid:id_deck>/', views.delete_deck, name='delete-deck'),
     path('update-deck/<uuid:id_deck>/', views.update_deck, name='update-deck'),
     path('reset-deck-progress/<uuid:id_deck>/', views.reset_deck_progress, name='reset-deck-progress'),
+    path('create-card/', views.create_card, name='create-card'),
+    path('generate_cards_with_ai/', views.generate_cards_with_ai, name='generate_cards_with_ai'),
 ]
