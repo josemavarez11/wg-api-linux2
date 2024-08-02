@@ -47,7 +47,7 @@ def generate_study_cards(language_to_speak, language_to_learn, topic, elements, 
     try:
         user_msg = build_cards_generation_msg(language_to_speak, language_to_learn, topic, elements)
     except Exception as e:
-        raise RuntimeError("Failed to build user presentation message") from e
+        raise RuntimeError("Failed to build cards generation message", e) from e
     
     try:
         response = client.chat.completions.create(

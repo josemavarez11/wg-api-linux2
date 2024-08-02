@@ -154,6 +154,9 @@ def generate_cards_with_ai(request):
     topic = request.data.get('topic')
     user_prompt = request.data.get('user_prompt')
 
+    if not (id_deck and cards_amount) or not (topic or user_prompt):
+        return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
+
     user_preferences = UserPreference.objects.filter(id_user=id_user).select_related(
         'id_native_language', 'id_language_to_study'
     )
@@ -161,9 +164,6 @@ def generate_cards_with_ai(request):
     if not user_preferences:
         return Response({'message': 'User preferences not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    if not (id_deck and cards_amount) or not (topic or user_prompt):
-        return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
-    
     deck = get_object_or_404(Deck, id=id_deck)
 
     cards = generate_study_cards(
