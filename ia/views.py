@@ -55,7 +55,7 @@ def generate_study_cards(language_to_speak, language_to_learn, topic, elements, 
             messages=[
                 { 
                     "role": "system",
-                    "content": prompts[prompt]['system']['english']
+                    "content": prompts['cards']['system']['english']
                 },
                 {"role": "user", "content": user_msg}
             ]
@@ -65,7 +65,7 @@ def generate_study_cards(language_to_speak, language_to_learn, topic, elements, 
     except OpenAIError as e:
         raise RuntimeError("OpenAI API request failed") from e
     except Exception as e:
-        raise RuntimeError("An unexpected error occurred during the OpenAI API request") from e
+        raise RuntimeError("An unexpected error occurred during the OpenAI API request", e) from e
     
     return response.choices[0].message.content
 
