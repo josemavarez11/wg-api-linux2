@@ -1,5 +1,6 @@
 from datetime import datetime
 from .serializers import CardSerializer
+import json
 
 def register_new_card(id_deck, val_card, mea_card):
     serializer = CardSerializer(data={
@@ -14,3 +15,11 @@ def register_new_card(id_deck, val_card, mea_card):
         return serializer.data
     else: 
         return serializer.errors
+    
+def parse_cards_string_to_dict(cards_str):
+    data = json.loads(cards_str)
+    
+    # Cambiar los valores del diccionario a formato con guiones bajos
+    cards_dict = {key: value.replace(' ', '_') for key, value in data.items()}
+    
+    return cards_dict

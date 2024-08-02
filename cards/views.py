@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from authentication.middlewares import admin_required, jwt_required
 from .serializers import DeckSerializer, CardSerializer, LearningPhaseSerializer, LearningStepSerializer
 from .models import Deck, Card, LearningPhase, LearningStep
-from .utils import register_new_card
+from .utils import register_new_card, parse_cards_string_to_dict
 from ia.views import generate_study_cards
 from learning.models import UserPreference
 
@@ -166,12 +166,20 @@ def generate_cards_with_ai(request):
 
     deck = get_object_or_404(Deck, id=id_deck)
 
-    cards = generate_study_cards(
-        user_preferences[0].id_native_language.des_language,
-        user_preferences[0].id_language_to_study.des_language,
-        topic,
-        cards_amount,
-        user_prompt
-    )
+    try:
+        cards = generate_study_cards(
+            user_preferences[0].id_native_language.des_language,
+            user_preferences[0].id_language_to_study.des_language,
+            topic,
+            cards_amount,
+            user_prompt
+        )
+        cards_dict = parse_cards_string_to_dict(cards)
+        for key, value in cards_dict.items():
+            register_new_card(deck.id, key, value)
+            
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
     return Response(cards, status=status.HTTP_201_CREATED)
