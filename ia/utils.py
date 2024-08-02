@@ -26,7 +26,7 @@ def build_user_presentation_msg(user_info):
     return message
 
 def build_cards_generation_msg(language_to_speak, language_to_learn, topic, elements):
-    msg_template = prompts['cards']['user']
+    msg_template = prompts['cards']['user']['english']
     message = (
         msg_template
         .replace('x1', language_to_speak)
