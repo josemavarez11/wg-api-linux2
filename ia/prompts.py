@@ -11,6 +11,11 @@ prompts = {
         }
     },
     "cards": {
-        
+        "system": {
+            "english": "You will receive a language to speak, a language to learn and a topic. You will generate a json with as many elements as you are given, and for each of them, the key must be a word or phrase in the speaking language related to or used in the scope of the given topic, and the value will be its meaning in the language to learn. The words or phrases generated should be very creative, witty  and not basic. Limit yourself to just replying with the json."
+        },
+        "user": {
+            "language to speak=x1, language to learn=x2, Topic=x3, Elements=x4"
+        }
     }
 }

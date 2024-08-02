@@ -25,5 +25,14 @@ def build_user_presentation_msg(user_info):
 
     return message
 
-def build_cards_generation_msg():
-    return
+def build_cards_generation_msg(language_to_speak, language_to_learn, topic, elements):
+    msg_template = prompts['cards']['user']
+    message = (
+        msg_template
+        .replace('language to speak=x1', language_to_speak)
+        .replace('language to learn=x2', language_to_learn)
+        .replace('Topic=x3', topic)
+        .replace('Elements=x4', elements)
+    )
+
+    return message

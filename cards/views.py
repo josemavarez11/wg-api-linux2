@@ -7,6 +7,8 @@ from authentication.middlewares import admin_required, jwt_required
 from .serializers import DeckSerializer, CardSerializer, LearningPhaseSerializer, LearningStepSerializer
 from .models import Deck, Card, LearningPhase, LearningStep
 from .utils import register_new_card
+from ia.views import generate_study_cards
+from learning.models import UserPreference
 
 # Create your views here.
 
@@ -145,12 +147,31 @@ def create_card(request):
 @jwt_required
 @api_view(['POST'])
 def generate_cards_with_ai(request):
+    id_user = request.custom_user.id
+
     id_deck = request.data.get('id_deck')
     cards_amount = request.data.get('cards_amount')
     topic = request.data.get('topic')
     user_prompt = request.data.get('user_prompt')
 
+    user_preferences = UserPreference.objects.filter(id_user=id_user).select_related(
+        'id_native_language', 'id_language_to_study'
+    )
+
+    if not user_preferences:
+        return Response({'message': 'User preferences not found'}, status=status.HTTP_404_NOT_FOUND)
+
     if not (id_deck and cards_amount) or not (topic or user_prompt):
         return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    deck = get_object_or_404(Deck, id=id_deck)
 
-    return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+    cards = generate_study_cards(
+        user_preferences[0].id_native_language.des_language,
+        user_preferences[0].id_language_to_study.des_language,
+        topic,
+        cards_amount,
+        user_prompt
+    )
+
+    return Response(cards, status=status.HTTP_201_CREATED)
