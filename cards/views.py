@@ -139,9 +139,6 @@ def create_card(request):
     deck = get_object_or_404(Deck, id=id_deck)
     card = register_new_card(deck.id, val_card, mea_card)
 
-    if card['error']:
-        return Response({'message': card['error']}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     return Response(card, status=status.HTTP_201_CREATED)
 
 @jwt_required
@@ -177,7 +174,7 @@ def generate_cards_with_ai(request):
         cards_dict = parse_cards_string_to_dict(cards)
         for key, value in cards_dict.items():
             register_new_card(deck.id, key, value)
-            
+
     except Exception as e:
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
