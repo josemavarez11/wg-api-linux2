@@ -27,12 +27,13 @@ def build_user_presentation_msg(user_info):
 
 def build_cards_generation_msg(language_to_speak, language_to_learn, topic, elements):
     msg_template = prompts['cards']['user']['english']
+    elements_str = str(elements)
     message = (
         msg_template
         .replace('x1', language_to_speak)
         .replace('x2', language_to_learn)
         .replace('x3', topic)
-        .replace('x4', elements)
+        .replace('x4', elements_str)
     )
 
     return message
