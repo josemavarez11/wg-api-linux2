@@ -25,14 +25,14 @@ def build_user_presentation_msg(user_info):
 
     return message
 
-def build_cards_generation_msg(language_to_speak, language_to_learn, topic, elements):
+def build_cards_generation_msg(language_to_speak, language_to_learn, topic, user_prompt, elements):
     msg_template = prompts['cards']['user']['english']
     elements_str = str(elements)
     message = (
         msg_template
         .replace('x1', language_to_speak)
         .replace('x2', language_to_learn)
-        .replace('x3', topic)
+        .replace('x3', user_prompt if user_prompt else topic)
         .replace('x4', elements_str)
     )
 

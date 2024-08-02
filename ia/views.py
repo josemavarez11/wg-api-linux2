@@ -45,7 +45,7 @@ def generate_study_cards(language_to_speak, language_to_learn, topic, elements, 
         raise ConnectionError("Failed to initialize OpenAI client") from e
     
     try:
-        user_msg = build_cards_generation_msg(language_to_speak, language_to_learn, topic, elements)
+        user_msg = build_cards_generation_msg(language_to_speak, language_to_learn, topic, prompt, elements)
     except Exception as e:
         raise RuntimeError("Failed to build cards generation message", e) from e
     
