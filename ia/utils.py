@@ -29,10 +29,10 @@ def build_cards_generation_msg(language_to_speak, language_to_learn, topic, elem
     msg_template = prompts['cards']['user']
     message = (
         msg_template
-        .replace('x1', 'english')
-        .replace('x2', 'spanish')
-        .replace('x3', 'sports')
-        .replace('x4', 15)
+        .replace('x1', language_to_speak)
+        .replace('x2', language_to_learn)
+        .replace('x3', topic)
+        .replace('x4', elements)
     )
 
     return message
