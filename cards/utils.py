@@ -23,3 +23,6 @@ def parse_cards_string_to_dict(cards_str):
     cards_dict = {key: value.replace(' ', '_') for key, value in data.items()}
     
     return cards_dict
+
+def evaluate_card(card_data):
+    print(card_data)

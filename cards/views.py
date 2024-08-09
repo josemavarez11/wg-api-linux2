@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from authentication.middlewares import admin_required, jwt_required
 from .serializers import DeckSerializer, CardSerializer, LearningPhaseSerializer, LearningStepSerializer
 from .models import Deck, Card, LearningPhase, LearningStep
-from .utils import register_new_card, parse_cards_string_to_dict
+from .utils import register_new_card, parse_cards_string_to_dict, evaluate_card
 from ia.views import generate_study_cards
 from learning.models import UserPreference
 
@@ -142,10 +142,41 @@ def create_card(request):
     return Response(card, status=status.HTTP_201_CREATED)
 
 @jwt_required
+@api_view(['DELETE'])
+def delete_card(request, id_card):
+    card = get_object_or_404(Card, id=id_card)
+    card.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+@jwt_required
+@api_view(['PUT'])
+def update_card(request, id_card):
+    card = get_object_or_404(Card, id=id_card)
+
+    if not request.data:
+        return Response({'message': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    data = request.data.copy()
+
+    if 'id_deck' in data:
+        data.pop('id_deck')
+
+    updated_data = {key: value for key, value in data.items() if getattr(card, key) != value}
+
+    if not updated_data:
+        return Response({'message': 'The data provided matches with the current data.'}, status=status.HTTP_304_NOT_MODIFIED)
+    
+    serializer = CardSerializer(card, data=updated_data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@jwt_required
 @api_view(['POST'])
 def generate_cards_with_ai(request):
     id_user = request.custom_user.id
-
     id_deck = request.data.get('id_deck')
     cards_amount = request.data.get('cards_amount')
     topic = request.data.get('topic')
@@ -174,9 +205,16 @@ def generate_cards_with_ai(request):
         cards_dict = parse_cards_string_to_dict(cards)
         for key, value in cards_dict.items():
             register_new_card(deck.id, key, value)
-
     except Exception as e:
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
     return Response(cards, status=status.HTTP_201_CREATED)
+
+@jwt_required
+@api_view(['PUT'])
+def review_card(request, id_card):
+    if not id_card:
+        return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    card = get_object_or_404(Card, id=id_card)
+    card_evaluated = evaluate_card(card)
