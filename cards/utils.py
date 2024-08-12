@@ -26,20 +26,14 @@ def parse_cards_string_to_dict(cards_str):
 
 def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_interval, step):
 
-    try:
-        graduating_max_interval = int(graduating_max_interval)  # Convert to integer
-        now = datetime.now(timezone.utc)  # Actualizar el manejo de la fecha y hora
-    except Exception as e:
-        raise Exception(f"Error al convertir el intervalo máximo de graduación y obtener now: {str(e)}")
+    graduating_max_interval = int(graduating_max_interval)  # Convert to integer
+    now = datetime.now(timezone.utc)  # Actualizar el manejo de la fecha y hora
     
-    try:
     # Convertir campos de fecha y hora a objetos datetime
-        if card.fir_review_card:
-            card.fir_review_card = datetime.fromisoformat(card.fir_review_card.replace('Z', '+00:00'))
-        if card.las_review_card:
-            card.las_review_card = datetime.fromisoformat(card.las_review_card.replace('Z', '+00:00'))
-    except Exception as e:
-        raise Exception(f"Error al convertir campos de fecha y hora: {str(e)}")
+    if card.fir_review_card:
+        card.fir_review_card = datetime.fromisoformat(card.fir_review_card.replace('Z', '+00:00'))
+    if card.las_review_card:
+        card.las_review_card = datetime.fromisoformat(card.las_review_card.replace('Z', '+00:00'))
     
     try:
         # Comprobar si es la primera vez que se revisa la carta
@@ -52,7 +46,7 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         if card.day_added_card:
             card.day_added_card = datetime.fromisoformat(card.day_added_card.replace('Z', '+00:00'))
     except:
-        raise Exception("Error al actualizar el contador de revisiones y la fecha de creación de la carta")
+        raise Exception(f"Error al actualizar el contador de revisiones y la fecha de creación de la carta: {str(e)}")
     
     initial_ease = 2.50  # Factor de facilidad inicial predeterminado (como una fracción)
 
