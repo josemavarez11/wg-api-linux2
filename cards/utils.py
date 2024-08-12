@@ -2,6 +2,7 @@ from datetime import datetime
 from .serializers import CardSerializer
 import json
 from .models import LearningPhase, LearningStep
+from datetime import datetime, timezone
 
 def register_new_card(id_deck, val_card, mea_card):
     serializer = CardSerializer(data={
@@ -26,7 +27,7 @@ def parse_cards_string_to_dict(cards_str):
     return cards_dict
 
 def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_interval, step):
-    now = datetime.now(datetime.timezone.utc)  # Actualizar el manejo de la fecha y hora
+    now = datetime.now(timezone.utc)  # Actualizar el manejo de la fecha y hora
 
     # Convertir campos de fecha y hora a objetos datetime
     if card['fir_review_card']:
