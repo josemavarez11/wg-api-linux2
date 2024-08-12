@@ -26,13 +26,13 @@ def parse_cards_string_to_dict(cards_str):
     return cards_dict
 
 def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_interval, step):
-    now = datetime.datetime.now(datetime.timezone.utc)  # Actualizar el manejo de la fecha y hora
+    now = datetime.now(datetime.timezone.utc)  # Actualizar el manejo de la fecha y hora
 
     # Convertir campos de fecha y hora a objetos datetime
     if card['fir_review_card']:
-        card['fir_review_card'] = datetime.datetime.fromisoformat(card['fir_review_card'].replace('Z', '+00:00'))
+        card['fir_review_card'] = datetime.fromisoformat(card['fir_review_card'].replace('Z', '+00:00'))
     if card['las_review_card']:
-        card['las_review_card'] = datetime.datetime.fromisoformat(card['las_review_card'].replace('Z', '+00:00'))
+        card['las_review_card'] = datetime.fromisoformat(card['las_review_card'].replace('Z', '+00:00'))
 
     # Comprobar si es la primera vez que se revisa la carta
     first_review = card['fir_review_card'] is None
