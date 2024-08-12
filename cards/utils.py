@@ -38,11 +38,11 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
     try:
         # Comprobar si es la primera vez que se revisa la carta
         first_review = card.fir_review_card is None
-
+    
         if not first_review:
             # Incrementar el contador de revisiones
-            card.rev_card += 1
-
+            card.rev_card = int(card.rev_card) + 1
+    
         if card.day_added_card:
             card.day_added_card = datetime.fromisoformat(card.day_added_card.replace('Z', '+00:00'))
     except Exception as e:
