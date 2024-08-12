@@ -31,7 +31,6 @@ LEARNING_STEPS = {
     "easy": "Easy"
 }
 
-
 def evaluate_card(card, learning_step_id, step, graduating_interval, max_interval_days):
 
     DEFAULT_STARTING_EASE = 2.5  # 250%
@@ -42,8 +41,7 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
     try: ## STEP1
         # Obtener el learning step y la fase de aprendizaje desde la base de datos
         learning_step = LearningStep.objects.get(id=learning_step_id).des_learning_step
-        #learning_phase = None if card.id_learning_phase is None else LearningPhase.objects.get(id=card.id_learning_phase).des_learning_phase
-        learning_phase = LearningPhase.objects.get(id=card.id_learning_phase).des_learning_phase
+        learning_phase = None if card.id_learning_phase is None else LearningPhase.objects.get(id=card.id_learning_phase).des_learning_phase
     except Exception as e:
         raise Exception(f"STEP1: {str(e)}")
 
@@ -55,7 +53,7 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
 
     try: ## STEP3
         # Calcular nuevo intervalo y ease
-        if learning_phase is None:  # Learning Phase
+        if learning_phase is None or "Learning Phase":  # Learning Phase
             if learning_step == "Again":
                 new_interval = 1 / 24  # 1 minuto
             elif learning_step == "Hard":
