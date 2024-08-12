@@ -23,7 +23,6 @@ def parse_cards_string_to_dict(cards_str):
     cards_dict = {key: value.replace(' ', '_') for key, value in data.items()}
     
     return cards_dict
-
 def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_interval, step):
 
     graduating_max_interval = int(graduating_max_interval)  # Convertir a entero
@@ -37,7 +36,12 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
     
     try:
         # Asegurar que rev_card sea un entero
-        card.rev_card = int(card.rev_card) if card.rev_card is not None else 0
+        if isinstance(card.rev_card, str) and card.rev_card.isdigit():
+            card.rev_card = int(card.rev_card)
+        elif card.rev_card is None:
+            card.rev_card = 0
+        else:
+            raise ValueError(f"El valor de rev_card ('{card.rev_card}') no es un número válido")
         
         # Comprobar si es la primera vez que se revisa la carta
         first_review = card.fir_review_card is None
@@ -49,7 +53,7 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         if card.day_added_card:
             card.day_added_card = datetime.fromisoformat(card.day_added_card.replace('Z', '+00:00'))
     except Exception as e:
-        raise Exception(f"Error al actualizar el contador de revisiones y la fecha de creación de la carta: {str(e)}")
+        raise Exception(f"Error al actualizar el contador de revisiones y la fecha de creación de la carta: {str(e)}, {str(first_review)}, {str(card.day_added_card)}")
     
     initial_ease = 2.50  # Factor de facilidad inicial predeterminado
 
@@ -169,4 +173,5 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         raise Exception(f"Error al actualizar el último paso de aprendizaje y calcular los tiempos de revisión: {str(e)}")
     
     return card, review_times
+
 
