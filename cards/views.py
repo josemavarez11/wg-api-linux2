@@ -221,7 +221,7 @@ def review_card(request, id_card):
     deck = get_object_or_404(Deck, id=card.id_deck.id)
 
     try:
-        card_evaluated = evaluate_card(card, id_learning_step, deck.gra_interval, deck.gra_max_interval, deck.ste_value)
+        card_evaluated = evaluate_card(card, id_learning_step, deck.ste_value, deck.gra_interval, deck.gra_max_interval)
     except Exception as e: 
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
