@@ -214,7 +214,7 @@ def generate_cards_with_ai(request):
 @api_view(['PUT'])
 def review_card(request, id_card):
     id_learning_step = request.data.get('id_learning_step')
-    if not id_card or id_learning_step:
+    if not id_card or not id_learning_step:
         return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
     
     card = get_object_or_404(Card, id=id_card)
