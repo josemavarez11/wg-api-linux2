@@ -53,7 +53,7 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         if card.day_added_card:
             card.day_added_card = datetime.fromisoformat(card.day_added_card.replace('Z', '+00:00'))
     except Exception as e:
-        raise Exception(f"Error al actualizar el contador de revisiones y la fecha de creación de la carta: {str(e)}, {str(first_review)}, {str(card.day_added_card)}")
+        raise Exception(f"Error al actualizar el contador de revisiones y la fecha de creación de la carta: {str(e)}")
     
     initial_ease = 2.50  # Factor de facilidad inicial predeterminado
 
