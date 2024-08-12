@@ -213,8 +213,18 @@ def generate_cards_with_ai(request):
 @jwt_required
 @api_view(['PUT'])
 def review_card(request, id_card):
-    if not id_card:
+    id_learning_step = request.data.get('id_learning_step')
+    if not id_card or id_learning_step:
         return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
     
     card = get_object_or_404(Card, id=id_card)
-    card_evaluated = evaluate_card(card)
+    deck = get_object_or_404(Deck, id=card.id_deck)
+
+    try:
+        card_evaluated = evaluate_card(card, id_learning_step, deck.gra_interval, deck.gra_max_interval, deck.ste_value)
+    except Exception as e: 
+        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    #save card modifications in db
+    
+    return Response(card_evaluated, status=status.HTTP_200_OK)
