@@ -218,7 +218,7 @@ def review_card(request, id_card):
         return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
     
     card = get_object_or_404(Card, id=id_card)
-    deck = get_object_or_404(Deck, id=card.id_deck)
+    deck = get_object_or_404(Deck, id=card.id_deck.id)
 
     try:
         card_evaluated = evaluate_card(card, id_learning_step, deck.gra_interval, deck.gra_max_interval, deck.ste_value)
