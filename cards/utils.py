@@ -23,6 +23,7 @@ def parse_cards_string_to_dict(cards_str):
     cards_dict = {key: value.replace(' ', '_') for key, value in data.items()}
     
     return cards_dict
+
 def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_interval, step):
 
     graduating_max_interval = int(graduating_max_interval)  # Convertir a entero
@@ -35,13 +36,14 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         card.las_review_card = datetime.fromisoformat(card.las_review_card.replace('Z', '+00:00'))
     
     try:
-        # Asegurar que rev_card sea un entero
-        if isinstance(card.rev_card, str) and card.rev_card.isdigit():
-            card.rev_card = int(card.rev_card)
+        # Asegurar que rev_card sea un entero válido
+        if isinstance(card.rev_card, str):
+            try:
+                card.rev_card = int(card.rev_card)
+            except ValueError:
+                raise ValueError(f"El valor de rev_card ('{card.rev_card}') no es un número entero válido")
         elif card.rev_card is None:
             card.rev_card = 0
-        else:
-            raise ValueError(f"El valor de rev_card ('{card.rev_card}') no es un número válido")
         
         # Comprobar si es la primera vez que se revisa la carta
         first_review = card.fir_review_card is None
@@ -173,5 +175,3 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         raise Exception(f"Error al actualizar el último paso de aprendizaje y calcular los tiempos de revisión: {str(e)}")
     
     return card, review_times
-
-
