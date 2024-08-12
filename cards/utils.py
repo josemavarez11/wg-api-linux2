@@ -42,7 +42,7 @@ def evaluate_card(card, id_learning_step, graduating_interval, graduating_max_in
         card['rev_card'] += 1
 
     if card['day_added_card']:
-        card['day_added_card'] = datetime.datetime.fromisoformat(card['day_added_card'].replace('Z', '+00:00'))
+        card['day_added_card'] = datetime.fromisoformat(card['day_added_card'].replace('Z', '+00:00'))
 
     initial_ease = 2.50  # Factor de facilidad inicial predeterminado (como una fracción)
 
