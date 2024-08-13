@@ -39,7 +39,8 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
 
     try:  # STEP1
         # Obtener el learning step y la fase de aprendizaje desde la base de datos
-        learning_step = LearningStep.objects.get(id=learning_step_id).des_learning_step
+        learning_step_instance = LearningStep.objects.get(id=learning_step_id)
+        learning_step = learning_step_instance.des_learning_step
         learning_phase = None if card.id_learning_phase is None else LearningPhase.objects.get(id=card.id_learning_phase).des_learning_phase
     except Exception as e:
         raise Exception(f"STEP1: {str(e)}")
@@ -101,7 +102,7 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
         card.eas_factor_card = int(ease_factor * 100)  # convertir de vuelta a porcentaje
         card.las_review_card = datetime.now(timezone.utc).isoformat()
         card.rev_card += 1
-        card.id_last_learning_step = learning_step_id
+        card.id_last_learning_step = learning_step_instance  # Asignar la instancia de LearningStep
     except Exception as e:
         raise Exception(f"STEP5: {str(e)}")
 
