@@ -221,15 +221,19 @@ def review_card(request, id_card):
     deck = get_object_or_404(Deck, id=card.id_deck.id)
 
     try:
+        # Evaluar la carta
         card_evaluated, review_times = evaluate_card(card, id_learning_step, deck.ste_value, deck.gra_interval, deck.gra_max_interval)
-        #save card modifications in db
+    except Exception as e:
+        return Response({'message': f'Evaluation error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    try:
+        card_evaluated.save()
         serialized_card = CardSerializer(card_evaluated)
         response_data = {
             'card': serialized_card.data,
             'review_times': review_times,
-        }   
-    except Exception as e: 
-        return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        }
+    except Exception as e:
+        return Response({'message': f'Saving error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response(response_data, status=status.HTTP_200_OK)
