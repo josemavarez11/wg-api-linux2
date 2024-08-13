@@ -31,10 +31,15 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
     MINIMUM_EASE = 1.3
 
     try:  # STEP1
-        # Obtener el learning step y la fase de aprendizaje desde la base de datos
+        # Obtener el learning step desde la base de datos
         learning_step_instance = LearningStep.objects.get(id=learning_step_id)
         learning_step = learning_step_instance.des_learning_step
-        learning_phase = None if card.id_learning_phase is None else LearningPhase.objects.get(id=card.id_learning_phase).des_learning_phase
+        
+        # Obtener la fase de aprendizaje actual
+        if card.id_learning_phase:
+            learning_phase = card.id_learning_phase.des_learning_phase  # Usa directamente la instancia
+        else:
+            learning_phase = None
     except Exception as e:
         raise Exception(f"STEP1: {str(e)}")
 
