@@ -24,16 +24,9 @@ def parse_cards_string_to_dict(cards_str):
     
     return cards_dict
 
-LEARNING_STEPS = {
-    "again": "Again",
-    "hard": "Hard",
-    "good": "Good",
-    "easy": "Easy"
-}
-
 def evaluate_card(card, learning_step_id, step, graduating_interval, max_interval_days):
     DEFAULT_STARTING_EASE = 2.5  # 250%
-    DEFAULT_HARD_INTERVAL = 1.2
+    DEFAULT_HARD_INTERVAL = 0.8  # 80% del valor del step
     DEFAULT_EASY_BONUS = 1.3
     MINIMUM_EASE = 1.3
 
@@ -46,7 +39,7 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
         raise Exception(f"STEP1: {str(e)}")
 
     try:  # STEP2
-        last_interval = card.las_interval_card
+        last_interval = card.las_interval_card or 0
         ease_factor = card.eas_factor_card / 100  # convertir de porcentaje a multiplicador
 
         if card.fir_review_card is None:
@@ -55,22 +48,20 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
         raise Exception(f"STEP2: {str(e)}")
 
     try:  # STEP3
-        # Calcular nuevo intervalo y ease
-        if learning_phase is None or learning_phase == "Learning Phase":  # Learning Phase
+        # Calcular nuevo intervalo y ease basado en la fase de aprendizaje
+        if learning_phase is None:  # Learning Phase
             if learning_step == "Again":
                 new_interval = 1  # 1 minuto
+                card.id_learning_phase = LearningPhase.objects.get(des_learning_phase="Learning Phase")
             elif learning_step == "Hard":
-                new_interval = 1  # 1 minuto
+                new_interval = max(step * DEFAULT_HARD_INTERVAL, 1)  # 80% del step
+                card.id_learning_phase = LearningPhase.objects.get(des_learning_phase="Learning Phase")
             elif learning_step == "Good":
-                new_interval = graduating_interval * 1440  # Graduating Interval en minutos
-                new_phase = LearningPhase.objects.get(des_learning_phase="Graduated Phase")
-                card.id_learning_phase = new_phase
+                new_interval = graduating_interval * 60  # Graduating Interval en minutos
+                card.id_learning_phase = LearningPhase.objects.get(des_learning_phase="Graduated Phase")
             elif learning_step == "Easy":
-                new_interval = graduating_interval * DEFAULT_EASY_BONUS * 1440  # Bonus adicional en minutos
-                new_phase = LearningPhase.objects.get(des_learning_phase="Graduated Phase")
-                card.id_learning_phase = new_phase
-            # Implementar uso de "step" para determinar los intervalos en LP
-            new_interval = max(new_interval, step)  # Asegura que el intervalo no sea menor que "step"
+                new_interval = graduating_interval * DEFAULT_EASY_BONUS * 60  # Bonus adicional en minutos
+                card.id_learning_phase = LearningPhase.objects.get(des_learning_phase="Graduated Phase")
         else:  # Graduated Phase
             if learning_step == "Again":
                 card.lap_card = True
@@ -110,9 +101,9 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
         # Calcular tiempos de repaso para cada learning step posible (en minutos)
         review_times = {
             "again": 1 if learning_phase is None else 10,
-            "hard": 1 if learning_phase is None else round(last_interval * DEFAULT_HARD_INTERVAL),
-            "good": round(graduating_interval * 1440) if learning_phase is None else round(last_interval * ease_factor),
-            "easy": round(graduating_interval * DEFAULT_EASY_BONUS * 1440) if learning_phase is None else round(last_interval * ease_factor * DEFAULT_EASY_BONUS)
+            "hard": max(step * DEFAULT_HARD_INTERVAL, 1) if learning_phase is None else round(last_interval * DEFAULT_HARD_INTERVAL),
+            "good": round(graduating_interval * 60) if learning_phase is None else round(last_interval * ease_factor),
+            "easy": round(graduating_interval * DEFAULT_EASY_BONUS * 60) if learning_phase is None else round(last_interval * ease_factor * DEFAULT_EASY_BONUS)
         }
     except Exception as e:
         raise Exception(f"STEP6: {str(e)}")
