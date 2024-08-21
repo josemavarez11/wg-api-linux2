@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 from .serializers import CardSerializer
 import json
 from .models import LearningPhase, LearningStep
+
 def register_new_card(id_deck, val_card, mea_card):
     serializer = CardSerializer(data={
         'id_deck': id_deck,
@@ -30,7 +31,7 @@ def evaluate_card(card, learning_step_id, step, graduating_interval, max_interva
     DEFAULT_EASY_BONUS = 1.3
     MINIMUM_EASE = 1.3
 
-    try:  # STEP1
+    try:  # STEP1 twisted-iocpsupport==1.0.4
         # Obtener el learning step desde la base de datos
         learning_step_instance = LearningStep.objects.get(id=learning_step_id)
         learning_step = learning_step_instance.des_learning_step

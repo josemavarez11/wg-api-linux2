@@ -43,7 +43,8 @@ def login(request):
         'subscription': {
             'id': user.id_subscription_user.id,
             'description': user.id_subscription_user.des_subscription
-        }
+        },
+        'profile_img_url': user.profile_img_url
     }
 
     return Response({'user': user_data, 'token': token}, status=status.HTTP_200_OK)
