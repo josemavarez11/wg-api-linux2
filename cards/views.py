@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from authentication.middlewares import admin_required, jwt_required
 from .serializers import DeckSerializer, CardSerializer, LearningPhaseSerializer, LearningStepSerializer
 from .models import Deck, Card, LearningPhase, LearningStep
-from .utils import register_new_card, parse_cards_string_to_dict, evaluate_card
+from .utils import register_new_card, parse_cards_string_to_dict, evaluate_card, get_cards_to_review
 from ia.views import generate_study_cards
 from learning.models import UserPreference
 
@@ -235,5 +235,42 @@ def review_card(request, id_card):
         }
     except Exception as e:
         return Response({'message': f'Saving error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response(response_data, status=status.HTTP_200_OK)
+
+@jwt_required
+@api_view(['GET'])
+def get_all_data_by_deck(request, id_deck):
+    deck = get_object_or_404(Deck, id=id_deck)
+    cards = Card.objects.filter(id_deck=deck)
+
+    deck_serializer = DeckSerializer(deck)
+    cards_serializer = CardSerializer(cards, many=True)
+
+
+    if cards_serializer.data == []:
+        return Response('No cards found', status=status.HTTP_204_NO_CONTENT)
+    
+    cards_not_studied = Card.objects.filter(id_deck=deck, rev_card=0)
+    cards_to_review = get_cards_to_review(cards_serializer.data)
+
+    cards_not_studied_serializer = CardSerializer(cards_not_studied, many=True)
+
+    response_data = {
+        'deck_details': {
+            'id': deck_serializer.data['id'],
+            'name': deck_serializer.data['nam_deck'],
+            'cards_amount': cards_serializer.data.__len__(),
+            'cards_not_studied': {
+                'amount': cards_not_studied_serializer.data.__len__(),
+                'cards': cards_not_studied_serializer.data,
+            },
+            'cards_to_review': {
+                'amount': cards_to_review.__len__(),
+                'cards': cards_to_review,
+            },
+        },
+        'cards_details': cards_serializer.data,
+    }
     
     return Response(response_data, status=status.HTTP_200_OK)
