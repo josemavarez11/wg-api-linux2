@@ -131,6 +131,18 @@ def update_user(request):
     serializer = UserSerializer(user, data=updated_data, partial=True)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        user_data = {
+            'id': serializer.data['id'],
+            'name': serializer.data['nam_user'],
+            'email': serializer.data['ema_user'],
+            'subscription': {
+                'id': serializer.data['id_subscription_user'],
+                'description': Subscription.objects.get(pk=serializer.data['id_subscription_user']).des_subscription
+            },
+            'profile_img_url': serializer.data['profile_img_url']
+        }
+
+        return Response(user_data, status=status.HTTP_200_OK)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
