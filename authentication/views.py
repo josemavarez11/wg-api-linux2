@@ -68,7 +68,7 @@ def send_reset_password_code(request):
     plain_message = strip_tags(html_message)
 
     message = EmailMultiAlternatives(
-        subject = 'Reset Password Code',
+        subject = 'It looks like you have requested to reset your WiseGlot password.',
         body=plain_message,
         from_email=settings.EMAIL_HOST_USER,
         to=[email,]
