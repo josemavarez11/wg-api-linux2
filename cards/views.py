@@ -251,10 +251,6 @@ def get_all_data_by_deck(request, id_deck):
 
     deck_serializer = DeckSerializer(deck)
     cards_serializer = CardSerializer(cards, many=True)
-
-
-    if cards_serializer.data == []:
-        return Response('No cards found', status=status.HTTP_204_NO_CONTENT)
     
     cards_not_studied = Card.objects.filter(id_deck=deck, rev_card=0)
     cards_to_review = get_cards_to_review(cards_serializer.data)
