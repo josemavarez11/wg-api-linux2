@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -58,7 +57,7 @@ def create_deck(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 @jwt_required
 @api_view(['GET'])
 def get_decks_by_user(request):
@@ -123,6 +122,10 @@ def reset_deck_progress(request, id_deck):
     deck = get_object_or_404(Deck, id=id_deck)
     cards = Card.objects.filter(id_deck=deck)
     for card in cards:
+        card.id_last_learning_step = None
+        card.id_learning_phase = None
+        card.fir_review_card = None
+        card.las_review_card = None
         card.lap_card = False
         card.las_interval_card = 0
         card.nex_interval_card = 0
@@ -189,6 +192,9 @@ def generate_cards_with_ai(request):
 
     if not (id_deck and cards_amount) or not (topic or user_prompt):
         return Response({'message': 'Missing data'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    existing_cards = Card.objects.filter(id_deck=id_deck).values('val_card', 'mea_card')
+    existing_cards_dict = { card['val_card']: card['mea_card'] for card in list(existing_cards) }
 
     user_preferences = UserPreference.objects.filter(id_user=id_user).select_related(
         'id_native_language', 'id_language_to_study'
@@ -205,15 +211,20 @@ def generate_cards_with_ai(request):
             user_preferences[0].id_language_to_study.des_language,
             topic,
             cards_amount,
-            user_prompt
+            user_prompt,
+            existing_cards_dict
         )
+        
         cards_dict = parse_cards_string_to_dict(cards)
+
+        new_cards_data = []
         for key, value in cards_dict.items():
-            register_new_card(deck.id, key, value)
+            new_card = register_new_card(deck.id, key, value)
+            new_cards_data.append(new_card)
     except Exception as e:
         return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    return Response(cards, status=status.HTTP_201_CREATED)
+    return Response(new_cards_data, status=status.HTTP_201_CREATED)
 
 @jwt_required
 @api_view(['PUT'])
@@ -226,22 +237,17 @@ def review_card(request, id_card):
     deck = get_object_or_404(Deck, id=card.id_deck.id)
 
     try:
-        # Evaluar la carta
-        card_evaluated, review_times = evaluate_card(card, id_learning_step, deck.ste_value, deck.gra_interval, deck.gra_max_interval)
+        card_evaluated = evaluate_card(card, id_learning_step, deck.ste_value, deck.gra_interval, deck.gra_max_interval)
     except Exception as e:
         return Response({'message': f'Evaluation error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     try:
         card_evaluated.save()
         serialized_card = CardSerializer(card_evaluated)
-        response_data = {
-            'card': serialized_card.data,
-            'review_times': review_times,
-        }
     except Exception as e:
         return Response({'message': f'Saving error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    return Response(response_data, status=status.HTTP_200_OK)
+    return Response(serialized_card.data, status=status.HTTP_200_OK)
 
 @jwt_required
 @api_view(['GET'])

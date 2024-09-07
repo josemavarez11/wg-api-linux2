@@ -31,7 +31,7 @@ def get_messages_by_user(request):
 
     return Response(formatted_data, status.HTTP_200_OK)
 
-def generate_study_cards(language_to_speak, language_to_learn, topic, elements, prompt):
+def generate_study_cards(language_to_speak, language_to_learn, topic, elements, prompt, existing_cards):
     api_key = os.getenv('OPENAI_API_KEY')
     if not api_key:
         raise ValueError("OPENAI_API_KEY environment variable is not set")
@@ -42,7 +42,7 @@ def generate_study_cards(language_to_speak, language_to_learn, topic, elements, 
         raise ConnectionError("Failed to initialize OpenAI client") from e
     
     try:
-        user_msg = build_cards_generation_msg(language_to_speak, language_to_learn, topic, prompt, elements)
+        user_msg = build_cards_generation_msg(language_to_speak, language_to_learn, topic, prompt, elements, existing_cards)
     except Exception as e:
         raise RuntimeError("Failed to build cards generation message", e) from e
     

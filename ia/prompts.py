@@ -12,11 +12,11 @@ prompts = {
     },
     "cards": {
         "system": {
-            "english": "You will receive a language to speak, a language to learn and a topic. You will generate a json with as many elements as you are given, and for each of them, the key must be a word or phrase in the speaking language related to or used in the scope of the given topic, and the value will be its meaning in the language to learn. The words or phrases generated should be very creative, witty  and not basic. Limit yourself to just replying with the json."
+            "english": "You will receive a language to speak, a language to learn and a topic. You will generate a json with as many elements as you are given, and for each of them, the key must be a word or phrase in the speaking language related to or used in the scope of the given topic, and the value will be its meaning in the language to learn. The words or phrases generated should be very creative, witty  and not basic. Limit yourself to just replying with the json. You will also receive an object where each key-value pair represents already existing information that you should not repeat."
         },
         "user": {
-            "english": "language to speak=x1, language to learn=x2, Topic=x3, Elements=x4",
-            "spanish": "lengua a hablar=x1, lengua a aprender=x2, Tema=x3, Element"
+            "english": "language to speak=x1, language to learn=x2, Topic=x3, Elements=x4, existing=x5",
+            "spanish": "lengua a hablar=x1, lengua a aprender=x2, Tema=x3, Elemento=x4 existente=x5"
         }
     }
 }
