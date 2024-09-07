@@ -132,7 +132,31 @@ def reset_deck_progress(request, id_deck):
         card.eas_factor_card = 250
         card.rev_card = 0
         card.save()
-    return Response(status=status.HTTP_200_OK)
+
+    deck_serializer = DeckSerializer(deck)
+    cards_serializer = CardSerializer(cards, many=True)
+    cards_not_studied = Card.objects.filter(id_deck=deck, rev_card=0)
+    cards_to_review = get_cards_to_review(cards_serializer.data)
+    cards_not_studied_serializer = CardSerializer(cards_not_studied, many=True)
+
+    response_data = {
+        'deck_details': {
+            'id': deck_serializer.data['id'],
+            'name': deck_serializer.data['nam_deck'],
+            'cards_amount': cards_serializer.data.__len__(),
+            'cards_not_studied': {
+                'amount': cards_not_studied_serializer.data.__len__(),
+                'cards': cards_not_studied_serializer.data,
+            },
+            'cards_to_review': {
+                'amount': cards_to_review.__len__(),
+                'cards': cards_to_review,
+            },
+        },
+        'cards_details': cards_serializer.data,
+    }
+
+    return Response(response_data, status=status.HTTP_200_OK)
 
 @jwt_required
 @api_view(['POST'])
