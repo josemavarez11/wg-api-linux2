@@ -6,14 +6,20 @@ from .models import LearningPhase, LearningStep
 def get_cards_to_review(cardsArray):
     cards_to_review = []
     current_time = datetime.now(timezone.utc)
+    last_review_time = None
     
     for card in cardsArray:
         if card['las_review_card'] is not None:
             last_review_time = datetime.fromisoformat(card['las_review_card'].replace('Z', '+00:00'))
-            next_review_time = last_review_time + timedelta(minutes=card['nex_interval_card'])
+        elif card['fir_review_card'] is not None: 
+            last_review_time = datetime.fromisoformat(card['fir_review_card'].replace('Z', '+00:00'))
+        else:
+            continue
+        
+        next_review_time = last_review_time + timedelta(minutes=card['nex_interval_card'])
             
-            if next_review_time <= current_time:
-                cards_to_review.append(card)
+        if next_review_time <= current_time:
+            cards_to_review.append(card)
     
     return cards_to_review
 
