@@ -18,4 +18,5 @@ urlpatterns = [
     path('review-card/<uuid:id_card>/', views.review_card, name='review-card'),
     path('delete-card/<uuid:id_card>/', views.delete_card, name='delete-card'),
     path('get-all-data-by-deck/<uuid:id_deck>/', views.get_all_data_by_deck, name='get-all-data-by-deck'),
+    path('get-deck-config/<uuid:id_deck>/', views.get_deck_config, name='get-deck-config'),
 ]
