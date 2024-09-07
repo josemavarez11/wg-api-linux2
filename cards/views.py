@@ -84,6 +84,15 @@ def get_cards_by_deck(request, id_deck):
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def get_deck_config(request, id_deck):
+    deck = Deck.objects.filter(id=id_deck).values('id', 'nam_deck', 'new_cards_per_day', 'ste_value', 'gra_interval', 'gra_max_interval').first()
+
+    if not deck:
+        return Response('Deck not found', status=status.HTTP_404_NOT_FOUND)
+    
+    return Response(deck, status=status.HTTP_200_OK)
+
 @jwt_required
 @api_view(['DELETE'])
 def delete_deck(request, id_deck):
