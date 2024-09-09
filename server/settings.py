@@ -13,7 +13,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'wiseglot-api.onrender.com',
     'wg-api-linux2.onrender.com',
-    '0.0.0.0'
+    '0.0.0.0',
+    '3.17.153.219'
 ]
 
 INSTALLED_APPS = [
