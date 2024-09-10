@@ -14,7 +14,9 @@ ALLOWED_HOSTS = [
     'wiseglot-api.onrender.com',
     'wg-api-linux2.onrender.com',
     '0.0.0.0',
-    '3.17.153.219'
+    '3.17.153.219',
+    'ec2-3-17-153-219.us-east-2.compute.amazonaws.com',
+    'example.com
 ]
 
 INSTALLED_APPS = [
